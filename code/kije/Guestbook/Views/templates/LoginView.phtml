@@ -1,0 +1,40 @@
+<?php /** @var kije\Guestbook\Views\LoginView $this */ ?>
+<?php $this->renderChildren('before_view'); ?>
+    <section class="form-container login-form-container">
+        <header class="login-section-header">
+            <h1>Login</h1>
+        </header>
+        <?php if ($msg = $this->getData('messages_success')): ?>
+            <p class="messages messages-success">
+                <?php echo $msg; ?>
+            </p>
+        <?php endif; ?>
+        <?php if ($msg = $this->getData('messages_error')): ?>
+            <p class="messages messages-error">
+                <?php echo $msg; ?>
+            </p>
+        <?php endif; ?>
+        <?php if ($this->getData('show_form', true)): ?>
+            <form class="form login-form" id="login-form" method="post">
+                <dl class="form-list formfield-list">
+                    <dt><label for="input-username">Username</label></dt>
+                    <dd><input type="text" name="username" required class="input input-text input-field-username"
+                               id="input-username"></dd>
+
+                    <dt><label for="input-password">Password</label></dt>
+                    <dd><input type="password" name="password" required
+                               class="input input-password input-field-password" id="input-password"></dd>
+
+                    <?php $this->renderChildren('additional_formfields'); ?>
+
+                    <dt>&nbsp;</dt>
+                    <dd>
+                        <button type="submit" class="button button-submit form-button" id="login-form-submit-button">
+                            <span>Login</span></button>
+                    </dd>
+                </dl>
+            </form>
+        <?php endif; ?>
+        <?php $this->renderChildren('after_form'); ?>
+    </section>
+<?php $this->renderChildren('after_view'); ?>

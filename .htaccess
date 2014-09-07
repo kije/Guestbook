@@ -5,15 +5,27 @@
 
     RewriteEngine On
 
+    # Rewrite Base to a consistent value
+    RewriteBase /
+
     # Redirect Trailing Slashes...
-    RewriteRule ^(.*)/$ /$1 [L,R=301]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond $0#%{REQUEST_URI} ([^#]*)#(.*)\1$
+    RewriteRule ^(.*)/$ %2$1 [L,R=301]
+
 
     # Handle Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
+    RewriteCond $0#%{REQUEST_URI} ([^#]*)#(.*)\1$
+    RewriteRule ^.*$ %2index.php [L,QSA]
 </IfModule>
 
+
+<IfModule mod_headers.c>
+    Header unset x-powered-by
+    Header unset Server
+</IfModule>
 
 
 ######################## BOILERPLATE ##################################
