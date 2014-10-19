@@ -10,6 +10,7 @@ namespace kije\Guestbook\Routes;
 
 use kije\Guestbook\Filters\LoggedOutFilter;
 use kije\Guestbook\inc\Guestbook;
+use kije\Guestbook\Models\User;
 use kije\Guestbook\Views\LoginView;
 use kije\Routing\RouteHandler;
 
@@ -29,13 +30,17 @@ class LoginRoute extends Route
 
     public function handle()
     {
-        Guestbook::getLayout()->addData('title', 'Login ' . Guestbook::getLayout()->getData('title'));
+        Guestbook::getLayout()->appendData('title', 'Login', ' - ');
         Guestbook::getLayout()->addChild($this->view);
 
         if (!empty($_POST)) {
-            $_SESSION['LOGIN'] = true;
+            $user = User::login($_POST['username'], $_POST['password']);
 
-            RouteHandler::redirect($this->uri, false, 302); // reload page
+
+
+            //$_SESSION['LOGIN'] = true;
+
+            //RouteHandler::redirect($this->uri, false, 302); // reload page
         }
 
     }

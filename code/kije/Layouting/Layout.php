@@ -39,4 +39,8 @@ abstract class Layout {
     {
         return $this->rootView->getData($name, $default);
     }
+
+    public function appendData($name, $data, $separator = '') {
+        return $this->rootView->appendData($name, $data, $separator);
+    }
 } 

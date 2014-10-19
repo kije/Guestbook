@@ -83,4 +83,18 @@ abstract class View
 
         return $default;
     }
+
+    public function appendData($name, $data, $separator = '') {
+        if (array_key_exists($name, $this->data)) {
+            if (is_array($this->data)) {
+                $this->data[$name][] = $data;
+            } elseif (is_string($this->data)) {
+                $this->data[$name] .= $separator.$data;
+            } else {
+                $this->data[$name] = $data;
+            }
+        } else {
+            $this->data[$name] = $data;
+        }
+    }
 }
