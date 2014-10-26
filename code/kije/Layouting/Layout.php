@@ -22,7 +22,7 @@ abstract class Layout {
         $this->rootView->render($return);
     }
 
-    public function addChild(View $child, $area = 'default') {
+    public function addChild(View &$child, $area = 'default') {
         $this->rootView->addChild($child, $area);
     }
 

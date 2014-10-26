@@ -43,6 +43,8 @@ abstract class View
             ob_end_clean();
             return $content;
         }
+
+        return null;
     }
 
     public function getTemplatePath()
@@ -53,7 +55,7 @@ abstract class View
     }
 
 
-    public function addChild(View $child, $area = 'default') {
+    public function addChild(View &$child, $area = 'default') {
         if ($child) {
             $this->children[$area][] = $child;
         }
