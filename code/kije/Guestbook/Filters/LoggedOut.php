@@ -8,16 +8,18 @@
 namespace kije\Guestbook\Filters;
 
 
-use kije\Routing\RouteHandler;
+use kije\Base\SessionManager;
 
-class LoggedOutFilter extends Filter {
+class LoggedOut extends Filter
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct('/');
     }
 
     public function check()
     {
-        return !isset($_SESSION['LOGIN']); // todo
+        return !SessionManager::get('user', false);
     }
 }

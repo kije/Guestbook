@@ -8,23 +8,23 @@
 namespace kije\Guestbook\Routes;
 
 
-use kije\Guestbook\Filters\LoggedInFilter;
-use kije\Guestbook\Filters\LoggedOutFilter;
-use kije\Guestbook\inc\Guestbook;
-use kije\Guestbook\Views\LoginView;
+use kije\Base\SessionManager;
+use kije\Guestbook\Filters\LoggedIn;
+use kije\Layouting\Flash;
 use kije\Routing\RouteHandler;
 
-class LogoutRoute extends Route
+class Logout extends Route
 {
 
     public function __construct($uri = '/logout', $alias_uris = null, $alias_redirect = true)
     {
-        parent::__construct($uri, new LoggedInFilter(), $alias_uris, $alias_redirect);
+        parent::__construct($uri, new LoggedIn(), $alias_uris, $alias_redirect);
     }
 
     public function handle()
     {
-        unset($_SESSION['LOGIN']);
+        SessionManager::delete('user');
+        Flash::add('Successfully logged out!');
         RouteHandler::redirect($this->uri, false, 302); // reload page
     }
 }

@@ -10,5 +10,5 @@ namespace kije\Guestbook\Views;
 
 use kije\Layouting\View;
 
-class LoginView extends View {
+class Login extends View {
 }

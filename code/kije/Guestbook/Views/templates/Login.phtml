@@ -1,22 +1,9 @@
-<?php /** @var kije\Guestbook\Views\LoginView $this */
-use kije\Guestbook\Models\User;
-
-?>
+<?php /** @var \kije\Guestbook\Views\Login $this */ ?>
 <?php $this->renderChildren('before_view'); ?>
     <section class="form-container login-form-container">
         <header class="login-section-header">
             <h1>Login</h1>
         </header>
-        <?php if ($msg = $this->getData('messages_success')): ?>
-            <p class="messages messages-success">
-                <?php echo $msg; ?>
-            </p>
-        <?php endif; ?>
-        <?php if ($msg = $this->getData('messages_error')): ?>
-            <p class="messages messages-error">
-                <?php echo $msg; ?>
-            </p>
-        <?php endif; ?>
         <?php if ($this->getData('show_form', true)): ?>
             <form class="form login-form" id="login-form" method="post">
                 <dl class="form-list formfield-list">
@@ -35,6 +22,10 @@ use kije\Guestbook\Models\User;
                         <button type="submit" class="button button-submit form-button" id="login-form-submit-button">
                             <span>Login</span></button>
                     </dd>
+
+                    <dt>&nbsp;</dt>
+                    <dt>&nbsp;</dt>
+                    <dd><a href="<?php echo PROJECT_URL; ?>/register">Register</a></dd>
                 </dl>
             </form>
         <?php endif; ?>
