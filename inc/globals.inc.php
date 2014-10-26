@@ -9,6 +9,9 @@ if (!defined('DEBUG')) {
     define('DEBUG', true);
 }
 
+
+define('START_TIME', microtime(true));
+
 // Define absolute Paths
 define('INC_ROOT', __DIR__);
 define('DOC_ROOT', $_SERVER['DOCUMENT_ROOT']);
@@ -42,3 +45,6 @@ require_once 'vars.inc.php';
 require_once PROJECT_ROOT . '/inc/autoloader.php';
 require_once PROJECT_ROOT . '/inc/db.config.php';
 require_once PROJECT_ROOT . '/inc/DB.php';
+
+// enable GC
+gc_enable();

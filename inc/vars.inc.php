@@ -63,3 +63,5 @@ $GLOBALS['HTTP_STATUS_CODES'] =  array(
     509 => 'Bandwidth Limit Exceeded',
     510 => 'Not Extended'
 );
+
+$GLOBALS['SQL_QUERY_COUNT'] = 0;
