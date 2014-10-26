@@ -10,6 +10,6 @@ namespace kije\Guestbook\Views;
 
 use kije\Layouting\View;
 
-class BaseView extends View {
+class Base extends View {
 
-} 
+}

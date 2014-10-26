@@ -1,0 +1,43 @@
+<?php /** @var kije\Guestbook\Views\Base $this  */ ?>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <!--[if IE]>
+            <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <![endif]-->
+
+        <title><?php echo $this->getData('title'); ?></title>
+
+        <?php $this->renderChildren('head'); ?>
+    </head>
+    <body id="top">
+        <?php $this->renderChildren('flash'); ?>
+        <?php $this->renderChildren(); ?>
+
+        <?php if (DEBUG): ?>
+            <?php printf(
+                '<pre class="debug_info" style="position: absolute; bottom: 0; left: 0; width: 300px;">
+                Processing Time: %.6fs
+                SQL Queries: %d
+                RAM Usage: %.1f KB
+                RAM Peak Usage: %.1f KB
+                PID: %d
+                --------------------------
+                Included Files: %d
+                --------------------------
+                PHP-Version: %s
+                SAPI: %s
+            </pre>',
+                microtime(true) - START_TIME,
+                $GLOBALS['SQL_QUERY_COUNT'],
+                bcdiv(memory_get_usage(), 1024, 10),
+                bcdiv(memory_get_peak_usage(), 1024, 10),
+                getmypid(),
+                count(get_included_files()),
+                phpversion(),
+                php_sapi_name()
+            ); ?>
+        <?php endif; ?>
+    </body>
+</html>
