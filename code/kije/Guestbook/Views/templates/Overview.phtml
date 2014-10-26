@@ -1,0 +1,13 @@
+<?php /** @var kije\Guestbook\Views\Overview $this */ ?>
+<?php $this->renderChildren('before'); ?>
+
+<?php if (!empty($this->posts)): ?>
+    <div class="post-list-container">
+        <ol class="post-list">
+            <?php $this->renderChildren(); ?>
+        </ol>
+    </div>
+<?php else: ?>
+    <p>No Posts found!</p>
+<?php endif; ?>
+<?php $this->renderChildren('after'); ?>
