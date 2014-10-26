@@ -21,10 +21,6 @@ class ORM implements ORMInterface
      */
     protected static $save_sql;
 
-    /**
-     * @var string
-     */
-    protected static $fetch_all_sql;
 
     /**
      * @var string
@@ -55,39 +51,11 @@ class ORM implements ORMInterface
      */
     protected function __construct()
     {
-
     }
 
     public static function fetchAll()
     {
-        if (empty(static::$fetch_all_sql)) {
-            static::$fetch_all_sql = 'SELECT ';
-            static::$fetch_all_sql .= '`' . implode('`,`', static::columns()) . '` ';
-            static::$fetch_all_sql .= 'FROM `' . static::tableName() . '`';
-            static::$fetch_all_sql .= ';';
-        }
-
-        $res = static::execute(
-            static::$fetch_all_sql,
-            array(),
-            !\DB::dbh()->inTransaction(),
-            $stmt
-        );
-
-        /** @var \PDOStatement $stmt */
-
-
-        if ($res) {
-            $instances = array();
-
-            while (($row = $stmt->fetchObject())) {
-                $instances[] = static::createFromObject($row);
-            }
-
-            return $instances;
-        }
-
-        return $res;
+        return static::query()->findMany();
     }
 
     public static function tableName()
@@ -102,11 +70,11 @@ class ORM implements ORMInterface
      * @param array $data The data which should be bound to it.
      * @param bool $inTransaction should the query be executed in a transaction
      * @param null|\PDOStatement $stmt passed by reference. if provided, prepared PDO statement will be assigned for later use (e.g. fetching results of select query)
-     * @param null|\PDOException $exception passed by reference. if there is an exception, it will be assigned
      * @return bool result of the query
      */
     public static function execute($sql, $data = array(), $inTransaction = false, &$stmt = null)
     {
+
         if ($inTransaction) {
             \DB::dbh()->beginTransaction();
         }
@@ -127,6 +95,8 @@ class ORM implements ORMInterface
             throw $e;
         }
 
+        $GLOBALS['SQL_QUERY_COUNT']++;
+
         if ($inTransaction) {
             \DB::dbh()->commit();
         }
@@ -145,8 +115,15 @@ class ORM implements ORMInterface
 
         $instance = new $class();
 
+        $fks = static::fks();
+
         if ($instance instanceof ORMInterface) {
             foreach (static::columns() as $col) {
+                if ($fks && array_key_exists($col, $fks)) {
+                    if (method_exists($fks[$col], 'fetch')) {
+                        $obj->$col = call_user_func_array(array($fks[$col], 'fetch'), array($obj->$col));
+                    }
+                }
                 if (property_exists($obj, $col)) {
                     $instance->set($col, $obj->$col);
                 }
@@ -186,40 +163,20 @@ class ORM implements ORMInterface
         return static::execute(static::$drop_sql, null, !\DB::dbh()->inTransaction());
     }
 
-    /**
-     * @var string
-     */
-    protected static $fetch_sql;
 
     public static function fetch($pk)
     {
-        if (empty(static::$fetch_sql)) {
-            static::$fetch_sql = 'SELECT ';
-            static::$fetch_sql .= '`' . implode('`,`', static::columns()) . '` ';
-            static::$fetch_sql .= 'FROM `' . static::tableName() . '` ';
-            static::$fetch_sql .= static::_buildPKWhere();
-            static::$fetch_sql .= 'LIMIT 1;';
+        $where = static::query()->where();
+
+        if (!is_array($pk)) {
+           $pk = array(self::pk() => $pk);
         }
 
-        /** @var \PDOStatement $stmt */
-        $stmt = null;
-
-        $res = static::execute(
-            static::$fetch_sql,
-            $pk,
-            !\DB::dbh()->inTransaction(),
-            $stmt
-        );
-
-        if ($res) {
-            $row = $stmt->fetchObject();
-
-            if (!empty($row)) {
-                return static::createFromObject($row);
-            }
+        foreach($pk as $col => $val) {
+            $where->equals($col, $val);
         }
 
-        return $res;
+        return $where->findOne();
     }
 
     public function delete($soft_delete = true)
@@ -252,6 +209,7 @@ class ORM implements ORMInterface
             static::$save_sql .= ' VALUES (:' . implode(',:', $cols) . ')';
 
             static::$save_sql .= ' ON DUPLICATE KEY UPDATE ';
+
 
             $updates = array();
             foreach ($cols as $col) {
@@ -294,7 +252,18 @@ class ORM implements ORMInterface
                 $val instanceof ORMInterface
             ) {
                 /** @var ORMInterface $val */
-                $val = $val->get($val->pk());
+                $fk_pk = $val->pk();
+                if (!is_array($fk_pk)) {
+                    $val = $val->get($fk_pk);
+                } else {
+                    $pks = array();
+                    foreach($fk_pk as $pk) {
+                        $pks[$pk] = $val->get($pk);
+                    }
+
+                    $val = $pks;
+                }
+
             }
 
             if (!empty($val) || $include_empty_values) {
@@ -414,18 +383,12 @@ class ORM implements ORMInterface
         return get_called_class();
     }
 
-    public function create($pk)
+    public static function create()
     {
-        $instance = static::fetch($pk);
+        $instance = new static();
 
-        if (!empty($instance)) {
-            $instance = new static();
-
-            foreach ($pk as $col => $val) {
-                $instance->set($col, $val);
-            }
-        }
-
+        $instance->set('active', 1);
+        $instance->set('deleted', 0);
 
         return $instance;
     }
@@ -448,7 +411,7 @@ class ORM implements ORMInterface
         $res = static::execute(
             $sql,
             $data,
-            !\DB::dbh()->inTransaction(),
+            false,
             $stmt
         );
 

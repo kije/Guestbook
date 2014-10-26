@@ -85,13 +85,12 @@ interface ORMInterface extends \JsonSerializable
     public function refresh();
 
     /**
-     * @param string|int|array|boolean $pk
      * @return self
      */
-    public function create($pk);
+    public static function create();
 
     /**
-     * @param string|int|array|boolean $pk
+     * @param array $pk
      * @return self
      */
     public static function fetch($pk);
