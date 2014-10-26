@@ -17,6 +17,9 @@ use kije\SimpleORM\ORM;
  */
 class User extends ORM
 {
+    const PASSWORD_HASH_ALGO = PASSWORD_DEFAULT;
+    const PASSWORD_HASH_COST = 12;
+
     const ROLE_USER = 'user';
     const ROLE_ADMIN = 'admin';
 
@@ -39,19 +42,60 @@ class User extends ORM
         );
     }
 
-    public static function login($username, $password) {
+    public static function login($username, $password)
+    {
         if (empty($username) || empty($password)) {
             return false;
         }
 
+        /** @var User $user */
         $user = self::query()->where()->equals('username', $username)->findOne();
 
         if ($user) {
-            // todo check password
-
-            return $user;
+            if ($user->verifyPassword($password)) {
+                return $user;
+            }
         }
 
         return false;
+    }
+
+
+
+    protected function verifyPassword($password)
+    {
+        if (!password_verify($password, $this->password)) {
+            return false;
+        }
+
+        if (
+        password_needs_rehash(
+            $this->password,
+            self::PASSWORD_HASH_ALGO,
+            array('cost' => self::PASSWORD_HASH_COST)
+        )
+        ) {
+            $this->setPassword($password);
+            $this->save();
+        }
+
+        return true;
+    }
+
+    public function setPassword($password)
+    {
+        $hash = $this->hashPassword($password);
+        if ($hash) {
+            $this->set('password', $hash);
+        }
+    }
+
+    /**
+     * @param $password
+     * @return bool|string
+     */
+    public static function hashPassword($password)
+    {
+        return password_hash($password, self::PASSWORD_HASH_ALGO, array('cost' => self::PASSWORD_HASH_COST));
     }
 }
