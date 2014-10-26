@@ -17,4 +17,5 @@ abstract class  Route extends \kije\Routing\Route
     }
 
     public abstract function handle();
+
 }
