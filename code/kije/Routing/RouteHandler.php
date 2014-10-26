@@ -9,6 +9,8 @@ namespace kije\Routing;
 
 use kije\Guestbook\Routes\Route;
 
+// todo implement parametrized route
+
 /**
  * Class RouteHandler
  * @package kije\Routing
@@ -72,6 +74,7 @@ class RouteHandler
      */
     public static function handleRoute($uri)
     {
+
         if ($route = self::getRoute($uri)) {
             if ($uri !== $route->getUri() && in_array($uri, $route->getAliasUris()) && $route->shouldAliasRedirect()) {
                 self::redirect($route);
