@@ -5,7 +5,6 @@ namespace kije\SimpleORM\QueryBuilder\QueryParts;
 
 use kije\SimpleORM\QueryBuilder\QueryBuilder;
 use kije\SimpleORM\QueryBuilder\QueryPart;
-use kije\SimpleORM\QueryBuilder\QueryParts\Where\Where;
 
 
 /**
@@ -97,6 +96,6 @@ abstract class AbstractQueryPart implements QueryPart
     {
         static $num = 0;
         $num++;
-        return "data_" . crc32(get_called_class() . $num);
+        return "data_" . md5(get_called_class() . $num);
     }
 }
