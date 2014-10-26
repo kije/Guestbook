@@ -8,6 +8,8 @@
 namespace kije\Guestbook\inc;
 
 use kije\Base\Runnable;
+use kije\Base\SessionManager;
+use kije\Layouting\Flash;
 use kije\Layouting\Layout;
 use kije\Layouting\View;
 use kije\Routing\RouteHandler;
@@ -64,6 +66,8 @@ class Guestbook implements Runnable
 
         self::$layout->addData('title', self::$layout->getData('title') . ' &ndash; Guestbook');
         self::$layout->render();
+
+        Flash::emptyFlashes();
     }
 
     /**
@@ -103,4 +107,5 @@ class Guestbook implements Runnable
     public static function getLayout() {
         return self::$layout;
     }
+
 }
