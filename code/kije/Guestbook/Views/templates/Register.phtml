@@ -1,0 +1,40 @@
+<?php /** @var \kije\Guestbook\Views\Register $this */ ?>
+<?php $this->renderChildren('before_view'); ?>
+    <section class="form-container login-form-container">
+        <header class="register-section-header">
+            <h1>Register</h1>
+        </header>
+        <form class="form register-form" id="register-form" method="post">
+            <dl class="form-list formfield-list">
+                <dt><label for="input-username">Username</label></dt>
+                <dd><input type="text" name="username" required class="input input-text input-field-username"
+                           id="input-username"></dd>
+
+                <dt><label for="input-mail">E-Mail</label></dt>
+                <dd><input type="email" name="mail" required class="input input-text input-field-email"
+                           id="input-mail"></dd>
+
+                <dt><label for="input-password">Password</label></dt>
+                <dd><input type="password" name="password" required
+                           class="input input-password input-field-password" id="input-password"></dd>
+
+                <dt><label for="input-password-repeat">Retype Password</label></dt>
+                <dd><input type="password" name="password-repeat" required
+                           class="input input-password input-field-password" id="input-password-repeat"></dd>
+
+                <?php $this->renderChildren('additional_formfields'); ?>
+
+                <dt>&nbsp;</dt>
+                <dd>
+                    <button type="submit" class="button button-submit form-button" id="register-form-submit-button">
+                        <span>Register</span></button>
+                </dd>
+
+                <dt>&nbsp;</dt>
+                <dt>&nbsp;</dt>
+                <dd><a href="<?php echo PROJECT_URL; ?>/login">Login</a></dd>
+            </dl>
+        </form>
+        <?php $this->renderChildren('after_form'); ?>
+    </section>
+<?php $this->renderChildren('after_view'); ?>
