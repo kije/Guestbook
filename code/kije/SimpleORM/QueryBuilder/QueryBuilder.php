@@ -7,7 +7,7 @@ namespace kije\SimpleORM\QueryBuilder;
 use kije\SimpleORM\ORMException;
 use kije\SimpleORM\QueryBuilder\QueryParts\Limit;
 use kije\SimpleORM\QueryBuilder\QueryParts\OrderBy;
-use kije\SimpleORM\QueryBuilder\QueryParts\Where\Where;
+use kije\SimpleORM\QueryBuilder\QueryParts\Where;
 
 /**
  * Class QueryBuilder
@@ -49,11 +49,7 @@ class QueryBuilder implements QueryPart
     {
         $query = $this->getSql();
 
-        if (!empty($query)) {
-            return call_user_func_array(array($this->class, 'fetchRaw'), array($query, $this->getData()));
-        }
-
-        return false;
+        return call_user_func_array(array($this->class, 'fetchRaw'), array($query, $this->getData()));
     }
 
     public function getSql()
@@ -71,6 +67,7 @@ class QueryBuilder implements QueryPart
         if (!empty($this->limit)) {
             $sql .= $this->limit->getSql() . ' ';
         }
+
 
         return $sql;
     }
@@ -94,18 +91,19 @@ class QueryBuilder implements QueryPart
         return $data;
     }
 
+    /**
+     * @return bool|$class
+     */
     public function findOne()
     {
         $this->limit(1);
 
         $query = $this->getSql();
 
-        if (!empty($query)) {
-            $res = call_user_func_array(array($this->class, 'fetchRaw'), array($query, $this->getData()));
+        $res = call_user_func_array(array($this->class, 'fetchRaw'), array($query, $this->getData()));
 
-            if (!empty($res)) {
-                return $res[0];
-            }
+        if (!empty($res)) {
+            return $res[0];
         }
 
         return false;
